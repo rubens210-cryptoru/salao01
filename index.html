@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Fênix | Cabelo, Unhas & Cílios</title>
+    
+    <!-- Meta tags SEO -->
+    <meta name="description" content="Agende seu horário no Studio Fênix. Especialistas de alto padrão em Cabelos, Unhas e Cílios em um ambiente luxuoso e relaxante.">
+    <meta name="keywords" content="salão de beleza, cabelo feminino, alongamento de unhas, cílios fio a fio, lash lifting, agendamento de salão">
+    
+    <!-- FontAwesome para ícones premium -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Estilo do App -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ==========================================================================
+         HEADER / BARRA DE NAVEGAÇÃO
+         ========================================================================== -->
+    <header class="header" id="header">
+        <div class="container header-container">
+            <a href="#" class="logo" id="headerLogo">
+                <i class="fa-solid fa-wand-magic-sparkles logo-icon"></i>
+                STUDIO <span>FÊNIX</span>
+            </a>
+            
+            <nav class="nav-container">
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="#hero" class="nav-link active" id="navLinkHome">Início</a></li>
+                    <li><a href="#servicos" class="nav-link" id="navLinkServices">Serviços</a></li>
+                    <li><a href="#sobre" class="nav-link" id="navLinkAbout">O Salão</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-actions">
+                <button class="btn btn-secondary btn-admin" id="btnAdminAccess" title="Acesso Administrativo">
+                    <i class="fa-solid fa-lock"></i> Painel Admin
+                </button>
+                <button class="btn btn-primary" id="btnHeaderBook" onclick="openBookingWizard()">
+                    <i class="fa-regular fa-calendar-check"></i> Agendar
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==========================================================================
+         PORTAL DO CLIENTE (SEÇÃO FRONTPAGE)
+         ========================================================================== -->
+    <main id="clientPortal">
+        
+        <!-- HERO SECTION -->
+        <section class="hero" id="hero">
+            <div class="container hero-grid">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <i class="fa-solid fa-crown"></i> O Refúgio da sua Beleza
+                    </div>
+                    <h1 class="hero-title">
+                        Realce sua beleza com toque de <span>luxo</span> e sofisticação
+                    </h1>
+                    <p class="hero-description">
+                        Um espaço exclusivo planejado para a mulher contemporânea. Especialistas renomadas em tratamentos capilares, design de unhas esculpidas e extensão de cílios com acabamento impecável.
+                    </p>
+                    <div class="hero-cta">
+                        <button class="btn btn-primary" onclick="openBookingWizard()">
+                            Agende sua Experiência <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                        <a href="#servicos" class="btn btn-secondary">Ver Serviços</a>
+                    </div>
+                </div>
+                
+                <div class="hero-image-wrapper">
+                    <div class="hero-image-frame">
+                        <img class="hero-marketing-img" src="destaque.jpeg" alt="Destaque Studio Fênix">
+                    </div>
+                    <div class="hero-image-tag">
+                        <div class="tag-icon">
+                            <i class="fa-solid fa-heart"></i>
+                        </div>
+                        <div class="tag-text">
+                            <h4>99.4%</h4>
+                            <p>Clientes Satisfeitas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SERVIÇOS SECTION -->
+        <section class="section" id="servicos">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-subtitle">Nossos Serviços</span>
+                    <h2 class="section-title">Menu de Especialidades</h2>
+                    <div class="divider-gold"></div>
+                </div>
+                
+                <!-- Filtros por Categoria -->
+                <div class="category-filters">
+                    <button class="filter-btn active" data-category="todos" id="btnFilterTodos">
+                        <i class="fa-solid fa-border-all"></i> Todos
+                    </button>
+                    <button class="filter-btn" data-category="cabelos" id="btnFilterCabelos">
+                        <i class="fa-solid fa-scissors"></i> Cabelos
+                    </button>
+                    <button class="filter-btn" data-category="unhas" id="btnFilterUnhas">
+                        <i class="fa-solid fa-hand-sparkles"></i> Unhas
+                    </button>
+                    <button class="filter-btn" data-category="cilios" id="btnFilterCilios">
+                        <i class="fa-solid fa-eye"></i> Cílios e Sobrancelhas
+                    </button>
+                </div>
+                
+                <!-- Grade de Serviços (Renderizada Dinamicamente) -->
+                <div class="services-grid" id="servicesGrid">
+                    <!-- Gerado por JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- NOSSAS ESPECIALISTAS SECTION -->
+        <section class="section" id="especialistas">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-subtitle">Nossa Equipe</span>
+                    <h2 class="section-title">Nossas Especialistas</h2>
+                    <div class="divider-gold"></div>
+                </div>
+                
+                <div class="specialists-organic-grid" id="specialistsOrganicGrid">
+                    <!-- Renderizado dinamicamente via JS (app.js) -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SOBRE / EQUIPE SECTION -->
+        <section class="section section-bg-alt" id="sobre">
+            <div class="container about-grid">
+                <div class="about-graphics">
+                    <div class="about-card-overlap">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="50" cy="50" r="40" stroke-dasharray="4 4" />
+                            <path d="M50 20 L50 80 M20 50 L80 50" opacity="0.3"/>
+                            <path d="M35 35 Q50 20 65 35 Q80 50 65 65 Q50 80 35 65 Q20 50 35 35 Z" />
+                        </svg>
+                        <div class="about-card-text">
+                            <h3>Profissionais Especialistas</h3>
+                            <p>Equipe certificada internacionalmente nas últimas tendências.</p>
+                        </div>
+                    </div>
+                    <div class="about-badge-floating">
+                        <span>Desde</span><strong>2020</strong>
+                    </div>
+                </div>
+                
+                <div class="about-text">
+                    <span class="section-subtitle">Exclusividade e Requinte</span>
+                    <h3>Onde a arte encontra o cuidado pessoal</h3>
+                    <p class="hero-description">
+                        No Studio Fênix, acreditamos que o autocuidado é um ritual de amor-próprio. Proporcionamos um ambiente calmo, com atendimento individualizado e os melhores produtos importados para garantir resultados excepcionais e duradouros.
+                    </p>
+                    
+                    <div class="about-features">
+                        <div class="about-feat-item">
+                            <i class="fa-solid fa-award about-feat-icon"></i>
+                            <div class="about-feat-content">
+                                <h4>Materiais Premium</h4>
+                                <p>Gel hipoalergênico, colas cirúrgicas para cílios e linhas de tratamentos veganos de ponta.</p>
+                            </div>
+                        </div>
+                        <div class="about-feat-item">
+                            <i class="fa-solid fa-sparkles about-feat-icon"></i>
+                            <div class="about-feat-content">
+                                <h4>Biossegurança Total</h4>
+                                <p>Esterilização hospitalar e ferramentas 100% descartáveis e higienizadas.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="openBookingWizard()">
+                        Agendar Horário Agora <i class="fa-regular fa-clock"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- GALERIA DE TRABALHOS SECTION -->
+        <section class="section" id="galeria">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-subtitle">Nosso Portfólio</span>
+                    <h2 class="section-title">Galeria de Trabalhos</h2>
+                    <div class="divider-gold"></div>
+                </div>
+                
+                <div class="gallery-grid" id="clientGalleryGrid">
+                    <!-- Renderizado dinamicamente via JS (app.js) -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==========================================================================
+         PAINEL DE CONTROLE ADMINISTRATIVO (DASHBOARD)
+         ========================================================================== -->
+    <section class="admin-section hidden" id="adminPortal">
+        <div class="container">
+            
+            <!-- Admin Header / Navegação Interna -->
+            <div class="admin-nav">
+                <div>
+                    <span class="section-subtitle">Portal de Controle</span>
+                    <h2 class="section-title"><i class="fa-solid fa-chart-line"></i> Dashboard Fênix</h2>
+                </div>
+                <div class="admin-nav-actions">
+                    <button class="btn btn-secondary" id="btnToggleAdminTheme" style="padding: 10px 20px; font-size: 12px; margin-right: 10px;">
+                        <i class="fa-solid fa-moon"></i> Tema Escuro
+                    </button>
+                    <button class="btn btn-primary btn-secondary" id="btnExitAdmin" style="background: var(--color-text-main); color: #fff; border-color: var(--color-text-main);">
+                        <i class="fa-solid fa-arrow-left-long"></i> Voltar ao Site
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Abas do Dashboard -->
+            <div class="category-filters" style="justify-content: flex-start; margin-bottom: 30px;">
+                <button class="admin-tab-btn active" data-tab="metricas" id="tabMetrics">
+                    <i class="fa-solid fa-chart-pie"></i> Estatísticas
+                </button>
+                <button class="admin-tab-btn" data-tab="agendamentos" id="tabBookings">
+                    <i class="fa-solid fa-calendar-days"></i> Agenda de Clientes
+                </button>
+                <button class="admin-tab-btn" data-tab="servicos" id="tabServices">
+                    <i class="fa-solid fa-tags"></i> Gerenciar Serviços
+                </button>
+                <button class="admin-tab-btn" data-tab="profissionais" id="tabProfessionals">
+                    <i class="fa-solid fa-user-group"></i> Gerenciar Equipe
+                </button>
+                <button class="admin-tab-btn" data-tab="galeria" id="tabGallery">
+                    <i class="fa-solid fa-images"></i> Galeria
+                </button>
+            </div>
+            
+            <!-- ================= ABAS CONTEÚDO ================= -->
+            
+            <!-- ABA 1: METRICAS E GRAFICOS -->
+            <div class="admin-tab-content" id="tabContentMetricas">
+                <!-- Cards de Resumo -->
+                <div class="admin-metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon revenue">
+                            <i class="fa-solid fa-money-bill-wave"></i>
+                        </div>
+                        <div class="metric-info">
+                            <h4>Faturamento Mensal</h4>
+                            <div class="metric-value" id="valRevenue">R$ 0,00</div>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon bookings">
+                            <i class="fa-regular fa-calendar-check"></i>
+                        </div>
+                        <div class="metric-info">
+                            <h4>Total Agendados</h4>
+                            <div class="metric-value" id="valTotalBookings">0</div>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon services">
+                            <i class="fa-solid fa-tags"></i>
+                        </div>
+                        <div class="metric-info">
+                            <h4>Serviços Ativos</h4>
+                            <div class="metric-value" id="valTotalServices">0</div>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon pros">
+                            <i class="fa-solid fa-id-card"></i>
+                        </div>
+                        <div class="metric-info">
+                            <h4>Profissionais</h4>
+                            <div class="metric-value" id="valTotalPros">0</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Layout de Gráficos e Resumos -->
+                <div class="admin-dash-layout">
+                    <!-- Proporções de Agendamento por Área -->
+                    <div class="admin-panel-card">
+                        <div class="panel-header-flex">
+                            <h3 class="panel-title">Faturamento por Categoria</h3>
+                            <i class="fa-solid fa-chart-column text-muted"></i>
+                        </div>
+                        <div class="chart-container">
+                            <!-- SVG Donut Chart Dinâmico -->
+                            <svg width="180" height="180" class="donut-chart-svg">
+                                <circle cx="90" cy="90" r="70" stroke="rgba(42,36,33,0.05)" stroke-width="8" fill="none"/>
+                                <!-- Segmento Cabelos -->
+                                <circle id="donutSegCabelos" cx="90" cy="90" r="70" class="donut-segment cabelos" stroke-dasharray="0 440" stroke-dashoffset="0"/>
+                                <!-- Segmento Unhas -->
+                                <circle id="donutSegUnhas" cx="90" cy="90" r="70" class="donut-segment unhas" stroke-dasharray="0 440" stroke-dashoffset="0"/>
+                                <!-- Segmento Cilios -->
+                                <circle id="donutSegCilios" cx="90" cy="90" r="70" class="donut-segment cilios" stroke-dasharray="0 440" stroke-dashoffset="0"/>
+                            </svg>
+                            
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    <div class="legend-label-flex">
+                                        <div class="legend-color cabelos"></div>
+                                        <span>Cabelos (<span id="lblPctCabelos">0%</span>)</span>
+                                    </div>
+                                    <strong id="lblValCabelos">R$ 0,00</strong>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-label-flex">
+                                        <div class="legend-color unhas"></div>
+                                        <span>Unhas (<span id="lblPctUnhas">0%</span>)</span>
+                                    </div>
+                                    <strong id="lblValUnhas">R$ 0,00</strong>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-label-flex">
+                                        <div class="legend-color cilios"></div>
+                                        <span>Cílios (<span id="lblPctCilios">0%</span>)</span>
+                                    </div>
+                                    <strong id="lblValCilios">R$ 0,00</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Ranking de Serviços e Destaques -->
+                    <div class="admin-panel-card">
+                        <div class="panel-header-flex">
+                            <h3 class="panel-title">Mais Procurados</h3>
+                            <i class="fa-solid fa-award text-muted"></i>
+                        </div>
+                        <ul class="footer-links" id="rankingServicesList" style="gap: 16px; margin-top: 10px;">
+                            <!-- Gerado por JavaScript -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ABA 2: LISTA DE AGENDAMENTOS (AGENDA COMPLETA) -->
+            <div class="admin-tab-content hidden" id="tabContentAgendamentos">
+                <div class="admin-panel-card">
+                    <div class="panel-header-flex" style="flex-wrap: wrap; gap: 16px; margin-bottom: 20px;">
+                        <h3 class="panel-title">Filtros da Agenda</h3>
+                        
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <input type="text" id="adminSearchInput" class="form-input" placeholder="Buscar por cliente..." style="padding: 8px 16px; font-size: 13px; width: 220px;">
+                            <input type="date" id="adminDateFilter" class="form-input" style="padding: 8px 16px; font-size: 13px;">
+                            <select id="adminStatusFilter" class="form-input" style="padding: 8px 16px; font-size: 13px;">
+                                <option value="todos">Todos os Status</option>
+                                <option value="pendente">Pendente</option>
+                                <option value="confirmado">Confirmado</option>
+                                <option value="concluido">Concluído</option>
+                                <option value="cancelado">Cancelado</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Cód.</th>
+                                    <th>Cliente / WhatsApp</th>
+                                    <th>Serviço</th>
+                                    <th>Profissional</th>
+                                    <th>Data / Hora</th>
+                                    <th>Preço</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminBookingsTableBody">
+                                <!-- Preenchido dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ABA 3: GERENCIAR SERVIÇOS (CRUD) -->
+            <div class="admin-tab-content hidden" id="tabContentServicos">
+                <div class="admin-panel-card">
+                    <div class="panel-header-flex">
+                        <h3 class="panel-title">Serviços Cadastrados</h3>
+                        <button class="btn btn-primary" onclick="openServiceModal()" style="padding: 10px 20px; font-size: 12px;">
+                            <i class="fa-solid fa-plus"></i> Novo Serviço
+                        </button>
+                    </div>
+                    
+                    <div class="crud-grid" id="adminServicesCrudGrid">
+                        <!-- Preenchido via JS -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ABA 4: GERENCIAR PROFISSIONAIS (CRUD) -->
+            <div class="admin-tab-content hidden" id="tabContentProfissionais">
+                <div class="admin-panel-card">
+                    <div class="panel-header-flex">
+                        <h3 class="panel-title">Equipe Técnica</h3>
+                        <button class="btn btn-primary" onclick="openProfessionalModal()" style="padding: 10px 20px; font-size: 12px;">
+                            <i class="fa-solid fa-user-plus"></i> Nova Profissional
+                        </button>
+                    </div>
+                    
+                    <div class="crud-grid" id="adminProsCrudGrid">
+                        <!-- Preenchido via JS -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ABA 5: GERENCIAR GALERIA (CRUD) -->
+            <div class="admin-tab-content hidden" id="tabContentGaleria">
+                <div class="admin-panel-card">
+                    <div class="panel-header-flex">
+                        <h3 class="panel-title">Galeria de Trabalhos</h3>
+                        <button class="btn btn-primary" onclick="openGalleryModal()" style="padding: 10px 20px; font-size: 12px;">
+                            <i class="fa-solid fa-plus"></i> Novo Trabalho
+                        </button>
+                    </div>
+                    
+                    <div class="crud-grid" id="adminGalleryCrudGrid">
+                        <!-- Preenchido via JS -->
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- ==========================================================================
+         FOOTER / SEÇÃO DE CONTATOS
+         ========================================================================== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-widget">
+                    <div class="footer-logo">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> STUDIO <span>FÊNIX</span>
+                    </div>
+                    <p style="margin-bottom: 20px;">
+                        Experiências sensoriais de beleza em um ambiente seguro, luxuoso e preparado exclusivamente para o seu bem-estar.
+                    </p>
+                    <div class="header-actions" style="justify-content: flex-start;">
+                        <a href="#" class="action-icon-btn" style="border-color: rgba(255,255,255,0.1); color: #fff;"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="action-icon-btn" style="border-color: rgba(255,255,255,0.1); color: #fff;"><i class="fa-brands fa-whatsapp"></i></a>
+                        <a href="#" class="action-icon-btn" style="border-color: rgba(255,255,255,0.1); color: #fff;"><i class="fa-brands fa-pinterest"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-widget">
+                    <h3>Áreas do Salão</h3>
+                    <ul class="footer-links">
+                        <li><a href="#servicos" onclick="filterServicesCategory('cabelos')">Design e Corte de Cabelos</a></li>
+                        <li><a href="#servicos" onclick="filterServicesCategory('unhas')">Nail Art & Alongamentos</a></li>
+                        <li><a href="#servicos" onclick="filterServicesCategory('cilios')">Extensão e Sobrancelhas</a></li>
+                        <li><a href="#servicos" onclick="filterServicesCategory('todos')">Tratamentos Exclusivos</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-widget">
+                    <h3>Funcionamento</h3>
+                    <ul class="footer-links" style="color: #a69a91; font-size: 14px;">
+                        <li style="display:flex; justify-content:space-between;"><span>Terça a Sexta:</span> <span>09h às 20h</span></li>
+                        <li style="display:flex; justify-content:space-between;"><span>Sábado:</span> <span>08h às 19h</span></li>
+                        <li style="display:flex; justify-content:space-between;"><span>Domingo e Segunda:</span> <span>Fechado</span></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-widget">
+                    <h3>Localização</h3>
+                    <div class="footer-contact-item">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>Av. Pres. Castelo Branco, 1420 - Sl 4 - São Paulo/SP</span>
+                    </div>
+                    <div class="footer-contact-item">
+                        <i class="fa-solid fa-phone"></i>
+                        <span>(11) 99999-8888 (WhatsApp)</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2026 Studio Fênix. Todos os direitos reservados.</p>
+                <p>Criado com elegância e carinho para você.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==========================================================================
+         MODAIS & ELEMENTOS INTERATIVOS FLUTUANTES
+         ========================================================================== -->
+         
+    <!-- 1. MODAL WIZARD DE AGENDAMENTO -->
+    <div class="modal-overlay" id="bookingWizardModal">
+        <div class="modal-window">
+            <button class="modal-close" onclick="closeBookingWizard()" id="btnCloseWizard"><i class="fa-solid fa-xmark"></i></button>
+            
+            <!-- Wizard Header -->
+            <div class="wizard-header">
+                <h3 class="wizard-title" id="wizardTitleText">Agendar sua Experiência</h3>
+                
+                <div class="wizard-progress">
+                    <div class="progress-line-active" id="wizardProgressLine"></div>
+                    
+                    <div class="step-indicator active" data-step="1">
+                        <div class="step-num">1</div>
+                        <div class="step-label">Serviço</div>
+                    </div>
+                    <div class="step-indicator" data-step="2">
+                        <div class="step-num">2</div>
+                        <div class="step-label">Especialista</div>
+                    </div>
+                    <div class="step-indicator" data-step="3">
+                        <div class="step-num">3</div>
+                        <div class="step-label">Data e Hora</div>
+                    </div>
+                    <div class="step-indicator" data-step="4">
+                        <div class="step-num">4</div>
+                        <div class="step-label">Cadastro</div>
+                    </div>
+                    <div class="step-indicator" data-step="5">
+                        <div class="step-num">5</div>
+                        <div class="step-label">Comprovante</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Wizard Body Panels -->
+            <div class="wizard-body">
+                
+                <!-- Passo 1: Seleção de Serviço -->
+                <div class="wizard-step-panel" id="panelStep1">
+                    <h3 style="margin-bottom: 20px; font-family: var(--font-heading);">Qual serviço você deseja realizar?</h3>
+                    <div class="wizard-services-list" id="wizardServicesContainer">
+                        <!-- Gerado por JS -->
+                    </div>
+                </div>
+                
+                <!-- Passo 2: Seleção de Profissional -->
+                <div class="wizard-step-panel hidden" id="panelStep2">
+                    <h3 style="margin-bottom: 20px; font-family: var(--font-heading);">Escolha uma especialista</h3>
+                    <div class="wizard-pro-grid" id="wizardProsContainer">
+                        <!-- Gerado por JS -->
+                    </div>
+                </div>
+                
+                <!-- Passo 3: Data e Hora -->
+                <div class="wizard-step-panel hidden" id="panelStep3">
+                    <h3 style="margin-bottom: 20px; font-family: var(--font-heading);">Escolha o melhor momento</h3>
+                    <div class="booking-datetime-container">
+                        
+                        <!-- Calendário -->
+                        <div class="calendar-wrapper">
+                            <div class="calendar-header">
+                                <button class="calendar-nav-btn" onclick="prevMonth()" id="btnPrevMonth"><i class="fa-solid fa-chevron-left"></i></button>
+                                <div class="calendar-month" id="calendarMonthLabel">Junho 2026</div>
+                                <button class="calendar-nav-btn" onclick="nextMonth()" id="btnNextMonth"><i class="fa-solid fa-chevron-right"></i></button>
+                            </div>
+                            <div class="calendar-grid">
+                                <div class="calendar-day-name">Dom</div>
+                                <div class="calendar-day-name">Seg</div>
+                                <div class="calendar-day-name">Ter</div>
+                                <div class="calendar-day-name">Qua</div>
+                                <div class="calendar-day-name">Qui</div>
+                                <div class="calendar-day-name">Sex</div>
+                                <div class="calendar-day-name">Sáb</div>
+                            </div>
+                            <div class="calendar-grid" id="calendarDaysContainer">
+                                <!-- Dias gerados dinamicamente por JS -->
+                            </div>
+                        </div>
+                        
+                        <!-- Slots Horários -->
+                        <div class="slots-wrapper">
+                            <div class="slots-title"><i class="fa-regular fa-clock"></i> Horários Disponíveis</div>
+                            <div class="slots-grid" id="timeSlotsContainer">
+                                <!-- Preenchido dinamicamente por JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Passo 4: Dados Finais Cadastro -->
+                <div class="wizard-step-panel hidden" id="panelStep4">
+                    <h3 style="margin-bottom: 20px; font-family: var(--font-heading);">Confirme seus dados para contato</h3>
+                    
+                    <form class="wizard-form" id="wizardClientForm" onsubmit="event.preventDefault();">
+                        <div class="form-group">
+                            <label class="form-label" for="clientNameInput">Seu Nome Completo *</label>
+                            <input type="text" id="clientNameInput" class="form-input" placeholder="Ex: Isabela Flores" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="clientPhoneInput">WhatsApp para Confirmação *</label>
+                            <input type="tel" id="clientPhoneInput" class="form-input" placeholder="Ex: (11) 99999-8888" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="clientNotesInput">Observações ou Preferências Especiais</label>
+                            <textarea id="clientNotesInput" class="form-input" rows="3" placeholder="Ex: Tenho alergia a algum material ou prefiro uma cabine silenciosa..."></textarea>
+                        </div>
+                        <div class="form-group" style="flex-direction: row; align-items: center; gap: 12px; margin-top: 10px;">
+                            <input type="checkbox" id="clientTermsCheckbox" style="width: 20px; height: 20px; accent-color: var(--color-rose-dark); cursor: pointer;" required>
+                            <label for="clientTermsCheckbox" style="font-size: 13px; font-weight: 600; color: var(--color-text-main); cursor: pointer; user-select: none;">
+                                Estou ciente da tolerância de 15 minutos de atraso.
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Passo 5: Ticket de Sucesso -->
+                <div class="wizard-step-panel hidden" id="panelStep5">
+                    <div class="ticket-container">
+                        <div class="ticket-success-icon">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <h2 style="font-family: var(--font-heading); margin-bottom: 8px;">Agendamento Confirmado!</h2>
+                        <p style="font-size: 14px; color: var(--color-text-muted);">Apresente este ticket na recepção no dia marcado.</p>
+                        
+                        <div class="ticket-code" id="ticketCodeDisplay">BK-00000</div>
+                        
+                        <div class="ticket-details">
+                            <div class="ticket-detail-item">
+                                <strong>Serviço</strong>
+                                <span id="ticketService">Design de Cílios</span>
+                            </div>
+                            <div class="ticket-detail-item">
+                                <strong>Especialista</strong>
+                                <span id="ticketPro">Fernanda Costa</span>
+                            </div>
+                            <div class="ticket-detail-item">
+                                <strong>Data</strong>
+                                <span id="ticketDate">12/06/2026</span>
+                            </div>
+                            <div class="ticket-detail-item">
+                                <strong>Horário</strong>
+                                <span id="ticketTime">14:00</span>
+                            </div>
+                            <div class="ticket-detail-item" style="grid-column: span 2; border-top: 1px dashed rgba(197,160,89,0.15); padding-top:10px; margin-top:5px;">
+                                <strong>Cliente</strong>
+                                <span id="ticketClient">Isabela Flores</span>
+                            </div>
+                        </div>
+                        <a href="#" target="_blank" class="btn" id="btnWhatsappConfirm" style="margin-top: 24px; width: 100%; background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); color: #ffffff; border: none; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);">
+                            <i class="fa-brands fa-whatsapp" style="font-size: 18px; margin-right: 8px;"></i> Confirmar no WhatsApp
+                        </a>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <!-- Wizard Footer Buttons -->
+            <div class="wizard-footer" id="wizardFooter">
+                <div class="wizard-footer-buttons">
+                    <button class="btn btn-secondary hidden" id="btnWizardBack" onclick="goBackWizardStep()">Voltar</button>
+                    <button class="btn btn-primary" id="btnWizardNext" onclick="goNextWizardStep()">Avançar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. MODAL LOGIN ADMIN PIN -->
+    <div class="modal-overlay" id="adminPinModal">
+        <div class="modal-window" style="max-width: 400px; padding: 40px; text-align: center;">
+            <button class="modal-close" onclick="closeAdminPinModal()" id="btnCloseAdminPin"><i class="fa-solid fa-xmark"></i></button>
+            <div class="tag-icon" style="margin: 0 auto 24px; width: 64px; height: 64px; font-size: 24px;">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h3 style="font-family: var(--font-heading); margin-bottom: 8px;">Acesso ao Painel</h3>
+            <p style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 24px;">Digite o PIN de acesso administrativo do salão.</p>
+            
+            <form onsubmit="event.preventDefault(); submitAdminPin();">
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <input type="password" id="adminPinInput" class="form-input" placeholder="••••" style="text-align: center; letter-spacing: 6px; font-size: 24px; font-weight: 700; max-width: 160px; margin: 0 auto;" maxlength="4" required>
+                    <span id="adminPinError" style="font-size: 12px; color: var(--color-danger); margin-top: 8px; font-weight: 600;" class="hidden">PIN incorreto. Tente novamente!</span>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    Acessar <i class="fa-solid fa-unlock-keyhole"></i>
+                </button>
+            </form>
+            <p style="font-size: 11px; color: var(--color-text-muted); margin-top: 20px;">Dica: o PIN padrão é <strong>1234</strong></p>
+        </div>
+    </div>
+
+    <!-- 3. MODAL CRUD DE SERVIÇO (ADD/EDIT) -->
+    <div class="modal-overlay" id="crudServiceModal">
+        <div class="modal-window" style="max-width: 500px;">
+            <button class="modal-close" onclick="closeServiceModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="wizard-header" style="padding-bottom: 16px;">
+                <h3 class="wizard-title" id="crudServiceTitle">Novo Serviço</h3>
+            </div>
+            <div class="wizard-body" style="padding: 24px 32px;">
+                <form id="crudServiceForm" onsubmit="event.preventDefault(); saveService();" class="wizard-form">
+                    <input type="hidden" id="crudServiceId">
+                    <div class="form-group">
+                        <label class="form-label" for="crudServiceName">Nome do Serviço *</label>
+                        <input type="text" id="crudServiceName" class="form-input" placeholder="Ex: Alongamento Cílios Fio a Fio" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="crudServiceCategory">Área / Categoria *</label>
+                        <select id="crudServiceCategory" class="form-input" required>
+                            <option value="cabelos">Cabelos</option>
+                            <option value="unhas">Unhas</option>
+                            <option value="cilios">Cílios e Sobrancelhas</option>
+                        </select>
+                    </div>
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label class="form-label" for="crudServicePrice">Preço (R$) *</label>
+                            <input type="number" id="crudServicePrice" class="form-input" min="0" step="0.01" placeholder="Ex: 120.00" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="crudServiceDuration">Duração (min) *</label>
+                            <input type="number" id="crudServiceDuration" class="form-input" min="15" step="5" placeholder="Ex: 60" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="crudServiceDesc">Descrição Breve *</label>
+                        <textarea id="crudServiceDesc" class="form-input" rows="3" placeholder="Escreva o que está incluso e os benefícios..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="margin-top: 10px; width: 100%;">
+                        Salvar Serviço <i class="fa-regular fa-floppy-disk"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. MODAL CRUD DE PROFISSIONAL (ADD/EDIT) -->
+    <div class="modal-overlay" id="crudProModal">
+        <div class="modal-window" style="max-width: 500px;">
+            <button class="modal-close" onclick="closeProfessionalModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="wizard-header" style="padding-bottom: 16px;">
+                <h3 class="wizard-title" id="crudProTitle">Nova Profissional</h3>
+            </div>
+            <div class="wizard-body" style="padding: 24px 32px;">
+                <form id="crudProForm" onsubmit="event.preventDefault(); saveProfessional();" class="wizard-form">
+                    <input type="hidden" id="crudProId">
+                    <div class="form-group">
+                        <label class="form-label" for="crudProName">Nome da Profissional *</label>
+                        <input type="text" id="crudProName" class="form-input" placeholder="Ex: Clarice Lispector" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="crudProCategory">Área / Especialidade Principal *</label>
+                        <select id="crudProCategory" class="form-input" required>
+                            <option value="cabelos">Cabelos (Cabeleireira/Colorista)</option>
+                            <option value="unhas">Unhas (Nail Designer)</option>
+                            <option value="cilios">Cílios (Lash Designer)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="crudProRole">Cargo / Apresentação Curta *</label>
+                        <input type="text" id="crudProRole" class="form-input" placeholder="Ex: Master Colorist & Hair Stylist" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="crudProPhoto">URL da Foto da Profissional</label>
+                        <input type="url" id="crudProPhoto" class="form-input" placeholder="https://exemplo.com/foto.jpg">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="crudProBio">Biografia Curta *</label>
+                        <textarea id="crudProBio" class="form-input" rows="3" placeholder="Biografia curta para a página principal..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="margin-top: 10px; width: 100%;">
+                        Salvar Profissional <i class="fa-regular fa-floppy-disk"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. MODAL CRUD DE GALERIA (ADD/EDIT) -->
+    <div class="modal-overlay" id="crudGalleryModal">
+        <div class="modal-window" style="max-width: 500px;">
+            <button class="modal-close" onclick="closeGalleryModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="wizard-header" style="padding-bottom: 16px;">
+                <h3 class="wizard-title" id="crudGalleryTitle">Novo Trabalho</h3>
+            </div>
+            <div class="wizard-body" style="padding: 24px 32px;">
+                <form id="crudGalleryForm" onsubmit="event.preventDefault(); saveGalleryItem();" class="wizard-form">
+                    <input type="hidden" id="crudGalleryId">
+                    <div class="form-group">
+                        <label class="form-label" for="crudGalleryTitleInput">Título do Trabalho *</label>
+                        <input type="text" id="crudGalleryTitleInput" class="form-input" placeholder="Ex: Mechas Mel Quente" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="crudGalleryImageInput">Link da Imagem (URL) *</label>
+                        <input type="url" id="crudGalleryImageInput" class="form-input" placeholder="https://exemplo.com/imagem.jpg" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="margin-top: 10px; width: 100%;">
+                        Salvar Trabalho <i class="fa-regular fa-floppy-disk"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- RECIPIENTE DE NOTIFICAÇÕES (TOASTS) -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Lógica JS Principal -->
+    <script src="app.js"></script>
+</body>
+</html>
