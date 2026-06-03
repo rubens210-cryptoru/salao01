@@ -81,35 +81,35 @@ const INITIAL_SERVICES = [
 const INITIAL_PROFESSIONALS = [
     {
         id: "prof-1",
-        name: "Gabriela Becker",
-        role: "Creative Director & Hair Stylist",
+        name: "Mayara Ferreira",
+        role: "Creative Director & Mega Hair Specialist",
         category: "cabelos",
-        photoUrl: "",
-        bio: "Com mais de 10 anos de experiência em salões de alta costura, Gabriela é especialista em cortes visagistas e mechas de transição suave que realçam a iluminação natural dos fios com saúde e brilho incomparável."
+        photoUrl: "https://images.unsplash.com/photo-1595959183075-c1d4a7795362?auto=format&fit=crop&w=600&h=800&q=80",
+        bio: "Reconhecida nacionalmente pela aplicação imperceptível de alongamentos e microcápsulas de queratina, Mayara une técnica e visagismo para devolver volume e comprimento de forma natural."
     },
     {
         id: "prof-2",
-        name: "Larissa Souza",
-        role: "Nail Designer & Expert Sculptor",
-        category: "unhas",
-        photoUrl: "",
-        bio: "Referência em alongamento de unhas em gel e fibra de vidro realista. Seu foco está em criar extensões com espessura ultrafina, curvatura anatômica perfeita e técnicas autorais de blindagem e esmaltação premium."
+        name: "Fanny",
+        role: "Master Lash & Eyebrow Designer",
+        category: "cilios",
+        photoUrl: "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?auto=format&fit=crop&w=600&h=800&q=80",
+        bio: "Especialista em realçar a beleza do olhar por técnicas avançadas de extensão de cílios fio a fio e volume russo, além do design estratégico de sobrancelhas personalizado para cada rosto."
     },
     {
         id: "prof-3",
-        name: "Fernanda Costa",
-        role: "Master Lash Designer & Lash Artist",
-        category: "cilios",
-        photoUrl: "",
-        bio: "Especialista em visagismo do olhar, Fernanda realiza extensões fio a fio clássico e volume russo sob medida com fios inteligentes de seda. Também é especialista em Lash Lifting reconstrutor de cílios naturais."
+        name: "Larissa",
+        role: "Nail Designer & Expert Manicure",
+        category: "unhas",
+        photoUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&h=800&q=80",
+        bio: "Especialista em alongamento em gel, nail art minimalista e cutilagem russa. Focada no cuidado com a saúde natural das unhas e acabamento fino de alta durabilidade."
     },
     {
         id: "prof-4",
-        name: "Camila Ribeiro",
-        role: "Terapia Capilar & Escovas de Luxo",
+        name: "Joelly",
+        role: "Hair Therapist & Treatment Expert",
         category: "cabelos",
-        photoUrl: "",
-        bio: "Especializada em cosmetologia e saúde do couro cabeludo, Camila desenha cronogramas capilares personalizados e realiza rituais de nutrição profunda, combinando cuidados terapêuticos e acabamento de alta sofisticação."
+        photoUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&h=800&q=80",
+        bio: "Focada em terapia capilar e cronogramas de recuperação dos fios. Joelly realiza diagnósticos detalhados e rituais profundos de nutrição sensorial para resgatar a saúde e o brilho do cabelo."
     }
 ];
 
@@ -190,6 +190,7 @@ let state = {
     professionals: [],
     bookings: [],
     gallery: [],
+    locks: [], // Bloqueios de Agenda
     currentWizardStep: 1,
     selectedService: null,
     selectedProfessional: null,
@@ -215,10 +216,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // 4. Efeito de Scroll no Header
     window.addEventListener("scroll", () => {
         const header = document.getElementById("header");
-        if (window.scrollY > 50) {
-            header.classList.add("scrolled");
-        } else {
-            header.classList.remove("scrolled");
+        if (header) {
+            if (window.scrollY > 50) {
+                header.classList.add("scrolled");
+            } else {
+                header.classList.remove("scrolled");
+            }
         }
     });
 });
@@ -237,11 +240,15 @@ function initLocalStorageData() {
     if (!localStorage.getItem("amelie_gallery")) {
         localStorage.setItem("amelie_gallery", JSON.stringify(INITIAL_GALLERY));
     }
+    if (!localStorage.getItem("amelie_locks")) {
+        localStorage.setItem("amelie_locks", JSON.stringify([]));
+    }
     
     state.services = JSON.parse(localStorage.getItem("amelie_services"));
     state.professionals = JSON.parse(localStorage.getItem("amelie_professionals"));
     state.bookings = JSON.parse(localStorage.getItem("amelie_bookings"));
     state.gallery = JSON.parse(localStorage.getItem("amelie_gallery"));
+    state.locks = JSON.parse(localStorage.getItem("amelie_locks"));
 }
 
 // Persistência em disco simulado (LocalStorage)
@@ -250,6 +257,7 @@ function saveStateToLocalStorage() {
     localStorage.setItem("amelie_professionals", JSON.stringify(state.professionals));
     localStorage.setItem("amelie_bookings", JSON.stringify(state.bookings));
     localStorage.setItem("amelie_gallery", JSON.stringify(state.gallery));
+    localStorage.setItem("amelie_locks", JSON.stringify(state.locks));
 }
 
 // Renderizar as Especialistas na tela inicial
@@ -277,7 +285,6 @@ function renderClientSpecialists() {
                     <p class="specialist-organic-bio">${pro.bio || ''}</p>
                 </div>
                 <div class="specialist-organic-footer">
-                    <a href="#galeria" class="specialist-organic-gallery"><i class="fa-solid fa-camera"></i> veja a galeria</a>
                     <button class="btn-organic-book" onclick="openBookingWizard('${pro.category}', null, '${pro.id}')">Agende seu horário</button>
                 </div>
             </div>
@@ -332,6 +339,14 @@ function initEventListeners() {
         });
     }
     
+    const btnAdminAccessFooter = document.getElementById("btnAdminAccessFooter");
+    if (btnAdminAccessFooter) {
+        btnAdminAccessFooter.addEventListener("click", (e) => {
+            e.preventDefault();
+            openAdminPinModal();
+        });
+    }
+    
     const btnExitAdmin = document.getElementById("btnExitAdmin");
     if (btnExitAdmin) {
         btnExitAdmin.addEventListener("click", () => {
@@ -363,6 +378,11 @@ function initEventListeners() {
     
     const adminStatusFilter = document.getElementById("adminStatusFilter");
     if (adminStatusFilter) adminStatusFilter.addEventListener("change", renderAdminBookingsTable);
+
+    const clientHistorySearchInput = document.getElementById("clientHistorySearchInput");
+    if (clientHistorySearchInput) {
+        clientHistorySearchInput.addEventListener("input", searchClientHistory);
+    }
     
     // Botão de alternar tema no Admin
     const btnToggleAdminTheme = document.getElementById("btnToggleAdminTheme");
@@ -387,11 +407,23 @@ function initEventListeners() {
             }
         });
     }
+
+    // Escutar input de serviço personalizado para deselecionar serviços pré-cadastrados
+    const wizardCustomServiceInput = document.getElementById("wizardCustomServiceInput");
+    if (wizardCustomServiceInput) {
+        wizardCustomServiceInput.addEventListener("input", () => {
+            if (wizardCustomServiceInput.value.trim() !== "") {
+                document.querySelectorAll(".wizard-service-option").forEach(el => el.classList.remove("selected"));
+                state.selectedService = null;
+            }
+        });
+    }
 }
 
 // --- RENDERIZADORES DO PORTAL DO CLIENTE ---
 function renderServiceCards() {
     const grid = document.getElementById("servicesGrid");
+    if (!grid) return;
     grid.innerHTML = "";
     
     const filtered = state.activeClientFilter === "todos" 
@@ -435,14 +467,12 @@ function renderServiceCards() {
 
 // Permite filtrar dinamicamente navegando no menu ou rodapé
 window.filterServicesCategory = function(category) {
-    const filterBtn = document.querySelector(`.filter-btn[data-category="${category}"]`);
-    if (filterBtn) {
-        filterBtn.click();
-    }
+    openClientServicesModal();
+    filterModalServices(category);
 };
 
 // --- WIZARD DE AGENDAMENTO (PASSO A PASSO) ---
-window.openBookingWizard = function(preSelectedCategory = "todos", preSelectedServiceId = null) {
+window.openBookingWizard = function(preSelectedCategory = "todos", preSelectedServiceId = null, preSelectedProId = null) {
     state.currentWizardStep = 1;
     state.selectedService = null;
     state.selectedProfessional = null;
@@ -453,6 +483,9 @@ window.openBookingWizard = function(preSelectedCategory = "todos", preSelectedSe
     document.getElementById("clientNameInput").value = "";
     document.getElementById("clientPhoneInput").value = "";
     document.getElementById("clientNotesInput").value = "";
+    const customInput = document.getElementById("wizardCustomServiceInput");
+    if (customInput) customInput.value = "";
+    
     const termsCheckbox = document.getElementById("clientTermsCheckbox");
     if (termsCheckbox) termsCheckbox.checked = false;
     
@@ -463,16 +496,26 @@ window.openBookingWizard = function(preSelectedCategory = "todos", preSelectedSe
     updateWizardUI();
     document.getElementById("bookingWizardModal").classList.add("active");
     
-    // Renderizar lista do Passo 1
-    renderWizardServices(preSelectedCategory);
-    
-    // Se um serviço específico foi selecionado, marca-o
+    // Identificar a categoria e pré-selecionar o serviço se aplicável
+    let proCategoryFilter = preSelectedCategory;
     if (preSelectedServiceId) {
+        const srv = state.services.find(s => s.id === preSelectedServiceId);
+        if (srv) {
+            state.selectedService = srv;
+            proCategoryFilter = srv.category;
+        }
+    }
+    
+    // Renderizar lista de profissionais no Passo 1
+    renderWizardProfessionals(proCategoryFilter);
+    
+    // Se uma profissional foi pré-selecionada, marca-a e avança automaticamente
+    if (preSelectedProId) {
         setTimeout(() => {
-            const element = document.querySelector(`.wizard-service-option[data-id="${preSelectedServiceId}"]`);
+            const element = document.querySelector(`.wizard-pro-card[data-id="${preSelectedProId}"]`);
             if (element) {
                 element.click();
-                goNextWizardStep(); // Avança automaticamente se o serviço já foi escolhido
+                goNextWizardStep(); // Avança automaticamente para o passo 2
             }
         }, 100);
     }
@@ -552,13 +595,30 @@ function updateWizardUI() {
     }
 }
 
-// Passo 1: Serviços do Wizard
-function renderWizardServices(categoryFilter = "todos") {
+// Passo 2: Procedimentos baseados na profissional selecionada
+function renderWizardServices() {
     const container = document.getElementById("wizardServicesContainer");
+    if (!container) return;
     container.innerHTML = "";
     
-    // Filtrar serviços elegíveis
-    const availableServices = state.services;
+    const customInput = document.getElementById("wizardCustomServiceInput");
+    
+    if (!state.selectedProfessional) {
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 20px; color: var(--color-text-muted);">Por favor, selecione uma especialista no passo anterior.</div>`;
+        return;
+    }
+    
+    // Filtrar serviços: prioriza linkedServices definidos no admin, senão usa categoria
+    const pro = state.selectedProfessional;
+    let availableServices;
+    
+    if (pro.linkedServices && pro.linkedServices.length > 0) {
+        // Usa os serviços vinculados manualmente pelo admin
+        availableServices = state.services.filter(s => pro.linkedServices.includes(s.id));
+    } else {
+        // Fallback: filtra pela categoria da profissional
+        availableServices = state.services.filter(s => s.category === pro.category);
+    }
     
     availableServices.forEach(srv => {
         const option = document.createElement("div");
@@ -571,7 +631,7 @@ function renderWizardServices(categoryFilter = "todos") {
         option.innerHTML = `
             <div class="wizard-service-info">
                 <h4>${srv.name} <span class="service-badge cat-${srv.category}" style="font-size: 8px; padding: 2px 6px;">${srv.category}</span></h4>
-                <p>${srv.description.substring(0, 70)}...</p>
+                <p>${srv.description ? srv.description.substring(0, 70) : ""}...</p>
             </div>
             <div class="wizard-service-price-meta">
                 <div class="wizard-service-price">R$ ${srv.price.toFixed(2)}</div>
@@ -580,6 +640,8 @@ function renderWizardServices(categoryFilter = "todos") {
         `;
         
         option.addEventListener("click", () => {
+            if (customInput) customInput.value = "";
+            
             document.querySelectorAll(".wizard-service-option").forEach(el => el.classList.remove("selected"));
             option.classList.add("selected");
             state.selectedService = state.services.find(s => s.id === srv.id);
@@ -589,16 +651,16 @@ function renderWizardServices(categoryFilter = "todos") {
     });
 }
 
-// Passo 2: Profissionais baseados na categoria do serviço selecionado
-function renderWizardProfessionals() {
+// Passo 1: Seleção de Especialista (com filtro opcional por categoria)
+function renderWizardProfessionals(categoryFilter = "todos") {
     const container = document.getElementById("wizardProsContainer");
+    if (!container) return;
     container.innerHTML = "";
     
-    if (!state.selectedService) return;
-    
-    // Filtra profissionais habilitados para a categoria do serviço
-    const eligiblePros = state.professionals.filter(p => p.category === state.selectedService.category);
-    
+    const eligiblePros = categoryFilter === "todos" 
+        ? state.professionals 
+        : state.professionals.filter(p => p.category === categoryFilter);
+        
     eligiblePros.forEach(pro => {
         const card = document.createElement("div");
         card.className = "wizard-pro-card";
@@ -608,7 +670,7 @@ function renderWizardProfessionals() {
         }
         
         // Iniciais para o avatar
-        const initials = pro.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
+        const initials = pro.name ? pro.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase() : "";
         
         card.innerHTML = `
             <div class="wizard-pro-avatar">${initials}</div>
@@ -617,9 +679,21 @@ function renderWizardProfessionals() {
         `;
         
         card.addEventListener("click", () => {
+            const oldPro = state.selectedProfessional;
+            const newPro = state.professionals.find(p => p.id === pro.id);
+            
+            if (!oldPro || oldPro.id !== newPro.id) {
+                // Se mudou de profissional, limpa o serviço selecionado e o input
+                state.selectedService = null;
+                const customInput = document.getElementById("wizardCustomServiceInput");
+                if (customInput) customInput.value = "";
+            }
+            
             document.querySelectorAll(".wizard-pro-card").forEach(el => el.classList.remove("selected"));
             card.classList.add("selected");
-            state.selectedProfessional = state.professionals.find(p => p.id === pro.id);
+            state.selectedProfessional = newPro;
+            
+            renderWizardServices();
         });
         
         container.appendChild(card);
@@ -664,13 +738,24 @@ function renderWizardCalendar() {
         
         const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         
-        // Bloquear datas no passado (antes de 02/06/2026) ou Domingos/Segundas (salão fechado)
+        // Bloquear datas no passado (antes de 02/06/2026) ou Domingos/Segundas (salão fechado) ou dias inteiros bloqueados
         const isPast = dateObj < todaySimulated;
         const dayOfWeek = dateObj.getDay();
         const isClosed = dayOfWeek === 0 || dayOfWeek === 1; // 0 = Domingo, 1 = Segunda
         
-        if (isPast || isClosed) {
+        // Verificar se há bloqueio de dia inteiro (timeType === "all") para esta data (do profissional selecionado ou todo o salão)
+        const currentLocks = localStorage.getItem("amelie_locks") ? JSON.parse(localStorage.getItem("amelie_locks")) : state.locks;
+        const isAllDayLocked = currentLocks.some(l => 
+            l.date === dateString && 
+            (l.professionalId === "all" || (state.selectedProfessional && l.professionalId === state.selectedProfessional.id)) && 
+            l.timeType === "all"
+        );
+        
+        if (isPast || isClosed || isAllDayLocked) {
             dayDiv.classList.add("disabled");
+            if (isAllDayLocked) {
+                dayDiv.title = "Agenda Bloqueada";
+            }
         } else {
             if (state.selectedDate === dateString) {
                 dayDiv.classList.add("selected");
@@ -723,10 +808,13 @@ function renderWizardTimeSlots() {
     const baseSlots = [
         "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"
     ];
+    // Recarregar agendamentos e bloqueios salvos no LocalStorage para garantir sincronia total em tempo real
+    const currentBookings = localStorage.getItem("amelie_bookings") ? JSON.parse(localStorage.getItem("amelie_bookings")) : state.bookings;
+    const currentLocks = localStorage.getItem("amelie_locks") ? JSON.parse(localStorage.getItem("amelie_locks")) : state.locks;
     
-    // Encontrar horários já agendados para este profissional nesta data
-    const bookedSlots = state.bookings
-        .filter(b => b.date === state.selectedDate && b.professionalId === state.selectedProfessional.id && b.status !== "cancelado")
+    // Encontrar horários já agendados para este profissional nesta data (com status confirmado ou pendente)
+    const bookedSlots = currentBookings
+        .filter(b => b.date === state.selectedDate && b.professionalId === state.selectedProfessional.id && (b.status === "confirmado" || b.status === "pendente"))
         .map(b => b.time);
         
     baseSlots.forEach(time => {
@@ -736,9 +824,25 @@ function renderWizardTimeSlots() {
         
         const isBooked = bookedSlots.includes(time);
         
-        if (isBooked) {
+        // Verificar se há bloqueio para este horário específico
+        const isLocked = currentLocks.some(l => {
+            if (l.date !== state.selectedDate) return false;
+            // Se o bloqueio for de outro profissional e não do salão todo, não se aplica
+            if (l.professionalId !== "all" && l.professionalId !== state.selectedProfessional.id) return false;
+            
+            if (l.timeType === "all") {
+                return true;
+            } else if (l.timeType === "custom") {
+                return (time >= l.startHour && time < l.endHour);
+            }
+            return false;
+        });
+        
+        if (isBooked || isLocked) {
             slotBtn.classList.add("disabled");
-            slotBtn.title = "Horário Ocupado";
+            slotBtn.title = isBooked ? "Horário Ocupado" : "Horário Bloqueado";
+            slotBtn.style.pointerEvents = "none";
+            slotBtn.style.opacity = "0.4";
         } else {
             if (state.selectedTimeSlot === time) {
                 slotBtn.classList.add("selected");
@@ -766,19 +870,34 @@ window.goBackWizardStep = function() {
 window.goNextWizardStep = function() {
     // Validações de Passo
     if (state.currentWizardStep === 1) {
-        if (!state.selectedService) {
-            showToast("Por favor, selecione o serviço desejado para prosseguir.", "error");
+        if (!state.selectedProfessional) {
+            showToast("Por favor, selecione uma de nossas especialistas para prosseguir.", "error");
             return;
         }
-        // Ao avançar do passo 1 pro 2, carrega especialistas
-        renderWizardProfessionals();
+        // Ao avançar do passo 1 pro 2, carrega os serviços da profissional
+        renderWizardServices();
     }
     
     else if (state.currentWizardStep === 2) {
-        if (!state.selectedProfessional) {
-            showToast("Por favor, selecione uma de nossas especialistas.", "error");
+        // Capturar serviço personalizado se digitado
+        const customInput = document.getElementById("wizardCustomServiceInput");
+        const customValue = customInput ? customInput.value.trim() : "";
+        
+        if (customValue !== "") {
+            state.selectedService = {
+                id: "custom",
+                name: customValue,
+                price: 0.00,
+                duration: 60,
+                category: state.selectedProfessional.category
+            };
+        }
+        
+        if (!state.selectedService) {
+            showToast("Por favor, selecione o serviço desejado ou digite um procedimento personalizado.", "error");
             return;
         }
+        
         // Renderiza calendário
         renderWizardCalendar();
     }
@@ -796,17 +915,28 @@ window.goNextWizardStep = function() {
         const phoneInput = document.getElementById("clientPhoneInput");
         const notesInput = document.getElementById("clientNotesInput");
         
-        if (!nameInput.checkValidity() || !phoneInput.checkValidity()) {
-            showToast("Por favor, preencha todos os campos obrigatórios (*).", "error");
+        // Validação explícita: Nome obrigatório
+        if (!nameInput || !nameInput.value.trim()) {
+            showToast("Por favor, preencha seu nome completo.", "error");
+            if (nameInput) { nameInput.style.borderColor = "var(--color-danger)"; nameInput.focus(); }
             return;
         }
+        nameInput.style.borderColor = "";
+        
+        // Validação explícita: WhatsApp obrigatório
+        if (!phoneInput || !phoneInput.value.trim()) {
+            showToast("Por favor, informe seu número de WhatsApp para que possamos confirmar o agendamento.", "error");
+            if (phoneInput) { phoneInput.style.borderColor = "var(--color-danger)"; phoneInput.focus(); }
+            return;
+        }
+        phoneInput.style.borderColor = "";
+        
+        const clientName = nameInput.value.trim();
+        const clientPhone = phoneInput.value.trim();
+        const clientNotes = notesInput ? notesInput.value.trim() : "";
         
         // Criar o agendamento real e persistir no State
-        const finalBooking = createNewBooking(
-            nameInput.value.trim(),
-            phoneInput.value.trim(),
-            notesInput.value.trim()
-        );
+        const finalBooking = createNewBooking(clientName, clientPhone, clientNotes);
         
         // Renderizar o ticket no Passo 5
         renderBookingTicket(finalBooking);
@@ -837,7 +967,7 @@ function createNewBooking(name, phone, notes) {
         date: state.selectedDate,
         time: state.selectedTimeSlot,
         price: state.selectedService.price,
-        status: "confirmado", // Confirmado por padrão simulando aprovação imediata
+        status: "pendente", // Pendente por padrão para fluxo de confirmação do admin
         notes: notes,
         createdAt: new Date().toISOString()
     };
@@ -856,34 +986,26 @@ function createNewBooking(name, phone, notes) {
 
 // Renderização do Comprovante Visual (Passo 5)
 function renderBookingTicket(booking) {
-    document.getElementById("ticketCodeDisplay").textContent = booking.id;
-    document.getElementById("ticketService").textContent = booking.serviceName;
-    document.getElementById("ticketPro").textContent = booking.professionalName;
-    document.getElementById("ticketClient").textContent = booking.clientName;
-    document.getElementById("ticketTime").textContent = booking.time;
+    const ticketCodeDisplay = document.getElementById("ticketCodeDisplay");
+    if (ticketCodeDisplay) ticketCodeDisplay.textContent = booking.id;
+    
+    const ticketService = document.getElementById("ticketService");
+    if (ticketService) ticketService.textContent = booking.serviceName;
+    
+    const ticketPro = document.getElementById("ticketPro");
+    if (ticketPro) ticketPro.textContent = booking.professionalName;
+    
+    const ticketClient = document.getElementById("ticketClient");
+    if (ticketClient) ticketClient.textContent = booking.clientName;
+    
+    const ticketTime = document.getElementById("ticketTime");
+    if (ticketTime) ticketTime.textContent = booking.time;
     
     // Formatar data: AAAA-MM-DD para DD/MM/AAAA
     const parts = booking.date.split("-");
     const formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
-    document.getElementById("ticketDate").textContent = formattedDate;
-
-    // Gerar link do WhatsApp para confirmação automática com dados formatados
-    const message = `Olá Studio Fênix! Gostaria de confirmar meu agendamento:\n\n` +
-                    `*Código:* ${booking.id}\n` +
-                    `*Cliente:* ${booking.clientName}\n` +
-                    `*Serviço:* ${booking.serviceName}\n` +
-                    `*Especialista:* ${booking.professionalName}\n` +
-                    `*Data:* ${formattedDate}\n` +
-                    `*Horário:* ${booking.time}`;
-                    
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappNumber = "5511999998888"; // Número do salão
-    const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodedMessage}`;
-    
-    const btnWhatsapp = document.getElementById("btnWhatsappConfirm");
-    if (btnWhatsapp) {
-        btnWhatsapp.href = whatsappUrl;
-    }
+    const ticketDate = document.getElementById("ticketDate");
+    if (ticketDate) ticketDate.textContent = formattedDate;
 }
 
 
@@ -974,6 +1096,12 @@ function showAdminTabContent(tabName) {
         const tabContentGaleria = document.getElementById("tabContentGaleria");
         if (tabContentGaleria) tabContentGaleria.classList.remove("hidden");
         renderAdminGalleryCrudGrid();
+    } else if (tabName === "bloqueios") {
+        document.getElementById("tabContentBloqueios").classList.remove("hidden");
+        loadLockProSelectOptions();
+        renderAdminLocks();
+    } else if (tabName === "backup") {
+        document.getElementById("tabContentBackup").classList.remove("hidden");
     }
 }
 
@@ -987,11 +1115,21 @@ function renderAdminDashboard() {
     renderAdminServicesCrudGrid();
     renderAdminProsCrudGrid();
     renderAdminGalleryCrudGrid();
+    loadLockProSelectOptions();
+    renderAdminLocks();
 }
 
 // 1. ABA 1: MÉTRICAS, RANKING E GRÁFICOS SVG
 function renderAdminDashboardMetrics() {
     const activeBookings = state.bookings.filter(b => b.status !== "cancelado");
+    
+    // Obter data atual para simulação (padrão é 2026-06-02 com base no metadata)
+    const todayString = "2026-06-02";
+    const currentMonthString = "2026-06"; // Junho 2026
+    
+    // Atualizar labels no cabeçalho
+    const todayLabel = document.getElementById("adminTodayDateLabel");
+    if (todayLabel) todayLabel.textContent = "02/06/2026";
     
     // Total de Agendados
     document.getElementById("valTotalBookings").textContent = activeBookings.length;
@@ -1002,9 +1140,24 @@ function renderAdminDashboardMetrics() {
     // Total de Profissionais
     document.getElementById("valTotalPros").textContent = state.professionals.length;
     
-    // Faturamento Mensal (Somatório de Preços)
+    // Faturamento Total Geral
     const revenue = activeBookings.reduce((sum, b) => sum + b.price, 0);
     document.getElementById("valRevenue").textContent = `R$ ${revenue.toFixed(2)}`;
+    
+    // Previsão de Faturamento (Hoje)
+    const revenueToday = activeBookings
+        .filter(b => b.date === todayString)
+        .reduce((sum, b) => sum + b.price, 0);
+    document.getElementById("valRevenueToday").textContent = `R$ ${revenueToday.toFixed(2)}`;
+    
+    // Faturamento do Mês (Somente confirmados e concluidos do mês atual da simulação)
+    const revenueMonth = activeBookings
+        .filter(b => b.date.startsWith(currentMonthString) && (b.status === "confirmado" || b.status === "concluido"))
+        .reduce((sum, b) => sum + b.price, 0);
+    document.getElementById("valRevenueMonth").textContent = `R$ ${revenueMonth.toFixed(2)}`;
+
+    // Renderizar tabela "Resumo de Hoje"
+    renderTodaySummaryTable(todayString);
     
     // Faturamento e Proporções por Categoria
     let revCabelos = 0;
@@ -1064,6 +1217,66 @@ function renderAdminDashboardMetrics() {
     
     // Ranking de Serviços
     renderRankingServices();
+}
+
+// Renderiza a lista de agendamentos de Hoje organizada por horário
+function renderTodaySummaryTable(todayString) {
+    const tbody = document.getElementById("adminTodayScheduleBody");
+    if (!tbody) return;
+    tbody.innerHTML = "";
+    
+    // Filtrar agendamentos de hoje ordenados por horário
+    const todayBookings = state.bookings
+        .filter(b => b.date === todayString)
+        .sort((a, b) => a.time.localeCompare(b.time));
+        
+    if (todayBookings.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 20px; color: var(--color-text-muted);">
+                    Nenhuma cliente agendada para hoje.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    todayBookings.forEach(booking => {
+        const tr = document.createElement("tr");
+        
+        // WhatsApp Link
+        const cleanPhone = booking.clientPhone ? booking.clientPhone.replace(/\D/g, '') : '';
+        const phoneFormatted = cleanPhone.length >= 10 ? '55' + cleanPhone : '';
+        const templateMsg = `Olá ${booking.clientName}, confirmamos seu horário hoje no Studio Fênix às ${booking.time} para o serviço de ${booking.serviceName}. Te aguardamos!`;
+        const encodedText = encodeURIComponent(templateMsg);
+        const whatsappLink = `https://wa.me/${phoneFormatted}?text=${encodedText}`;
+        
+        const statusOptions = ['pendente', 'confirmado', 'concluido', 'cancelado'];
+        const statusSelectHtml = `<select class="form-input admin-status-select" onchange="changeBookingStatus('${booking.id}', this.value)" style="padding: 4px 8px; font-size: 11px; font-weight: 700; width: 110px; border-radius: 20px; text-transform: capitalize; cursor: pointer;">
+            ${statusOptions.map(s => `<option value="${s}" ${booking.status === s ? 'selected' : ''}>${s.charAt(0).toUpperCase() + s.slice(1)}</option>`).join('')}
+        </select>`;
+        
+        tr.innerHTML = `
+            <td><strong style="color: var(--color-gold); font-size: 14px;">${booking.time}</strong></td>
+            <td>
+                <div><strong>${booking.clientName}</strong></div>
+                <div style="font-size: 11px; color: var(--color-text-muted);">${booking.clientPhone || 'N/A'}</div>
+            </td>
+            <td>${booking.serviceName}</td>
+            <td><strong>${booking.professionalName}</strong></td>
+            <td>${statusSelectHtml}</td>
+            <td>
+                <div class="table-actions">
+                    ${phoneFormatted ? `
+                        <a href="${whatsappLink}" target="_blank" class="action-icon-btn confirm" title="Lembrete via WhatsApp" style="color: #25D366; text-decoration: none;">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </a>
+                    ` : ''}
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
 }
 
 function renderRankingServices() {
@@ -1144,11 +1357,30 @@ function renderAdminBookingsTable() {
         const dateParts = booking.date.split("-");
         const formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
         
+        // Clean phone for WhatsApp link
+        const cleanPhone = booking.clientPhone ? booking.clientPhone.replace(/\D/g, '') : '';
+        let phoneFormatted = cleanPhone;
+        if (cleanPhone.length === 10 || cleanPhone.length === 11) {
+            phoneFormatted = '55' + cleanPhone;
+        }
+        
+        const templateMsg = `Olá ${booking.clientName}, recebemos seu pedido de agendamento no Studio Fênix para o serviço de ${booking.serviceName} com a ${booking.professionalName} no dia ${formattedDate} às ${booking.time}. Podemos confirmar?`;
+        const encodedText = encodeURIComponent(templateMsg);
+        const whatsappLink = `https://wa.me/${phoneFormatted}?text=${encodedText}`;
+        
+        // Status select HTML
+        const statusOptions = ['pendente', 'confirmado', 'concluido', 'cancelado'];
+        const statusSelectHtml = `<select class="form-input admin-status-select" onchange="changeBookingStatus('${booking.id}', this.value)" style="padding: 5px 8px; font-size: 11px; font-weight: 700; min-width: 110px; border-radius: 20px; text-transform: capitalize; cursor: pointer;">
+            ${statusOptions.map(s => `<option value="${s}" ${booking.status === s ? 'selected' : ''}>${s.charAt(0).toUpperCase() + s.slice(1)}</option>`).join('')}
+        </select>`;
+        
         tr.innerHTML = `
             <td><strong>${booking.id}</strong></td>
             <td>
                 <div><strong>${booking.clientName}</strong></div>
-                <div style="font-size: 11px; color: var(--color-text-muted);">${booking.clientPhone}</div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                    <span style="font-size: 11px; color: var(--color-text-muted);">${booking.clientPhone || 'N/A'}</span>
+                </div>
             </td>
             <td>
                 <div>${booking.serviceName}</div>
@@ -1160,14 +1392,14 @@ function renderAdminBookingsTable() {
                 <div style="font-size:11px; font-weight:600; color:var(--color-gold);">${booking.time}</div>
             </td>
             <td><strong>R$ ${booking.price.toFixed(2)}</strong></td>
-            <td><span class="status-badge ${booking.status}">${booking.status}</span></td>
+            <td>${statusSelectHtml}</td>
             <td>
                 <div class="table-actions">
-                    ${booking.status === "pendente" ? `
-                        <button class="action-icon-btn confirm" onclick="changeBookingStatus('${booking.id}', 'confirmado')" title="Confirmar Agendamento">
-                            <i class="fa-solid fa-calendar-check"></i>
-                        </button>
-                    ` : ""}
+                    ${phoneFormatted ? `
+                        <a href="${whatsappLink}" target="_blank" class="action-icon-btn confirm" title="Confirmar via WhatsApp" style="color: #25D366; text-decoration: none;">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </a>
+                    ` : ''}
                     ${booking.status !== "concluido" && booking.status !== "cancelado" ? `
                         <button class="action-icon-btn done" onclick="changeBookingStatus('${booking.id}', 'concluido')" title="Marcar como Concluído">
                             <i class="fa-solid fa-circle-check"></i>
@@ -1175,10 +1407,12 @@ function renderAdminBookingsTable() {
                         <button class="action-icon-btn cancel" onclick="changeBookingStatus('${booking.id}', 'cancelado')" title="Cancelar Agendamento">
                             <i class="fa-solid fa-ban"></i>
                         </button>
-                    ` : ""}
-                    ${booking.status === "concluido" || booking.status === "cancelado" ? `
-                        <span style="color:var(--color-text-muted); font-size:11px;">Sem ações</span>
-                    ` : ""}
+                    ` : `
+                        <span style="color:var(--color-text-muted); font-size:11px;">Finalizado</span>
+                    `}
+                    <button class="action-icon-btn cancel" onclick="deleteBookingIndividual('${booking.id}')" title="Excluir Agendamento" style="color: var(--color-danger); border-color: rgba(220,53,69,0.15); background: rgba(220,53,69,0.04);">
+                        <i class="fa-regular fa-trash-can"></i>
+                    </button>
                 </div>
             </td>
         `;
@@ -1353,6 +1587,9 @@ window.openProfessionalModal = function(proId = null) {
     if (form) form.reset();
     if (document.getElementById("crudProId")) document.getElementById("crudProId").value = "";
     
+    // Renderizar checkboxes de serviços vinculados
+    renderProServiceCheckboxes(proId);
+    
     if (proId) {
         if (title) title.textContent = "Editar Profissional";
         const pro = state.professionals.find(p => p.id === proId);
@@ -1370,6 +1607,37 @@ window.openProfessionalModal = function(proId = null) {
     
     if (modal) modal.classList.add("active");
 };
+
+// Renderizar os checkboxes de serviços vinculados no modal da profissional
+function renderProServiceCheckboxes(proId = null) {
+    const container = document.getElementById("crudProServicesCheckboxes");
+    if (!container) return;
+    container.innerHTML = "";
+    
+    const pro = proId ? state.professionals.find(p => p.id === proId) : null;
+    const linkedServiceIds = (pro && pro.linkedServices) ? pro.linkedServices : [];
+    
+    if (state.services.length === 0) {
+        container.innerHTML = '<span style="font-size:12px; color:var(--color-text-muted);">Nenhum serviço cadastrado ainda.</span>';
+        return;
+    }
+    
+    state.services.forEach(srv => {
+        const isChecked = linkedServiceIds.includes(srv.id);
+        const div = document.createElement("div");
+        div.style.display = "flex";
+        div.style.alignItems = "center";
+        div.style.gap = "10px";
+        div.innerHTML = `
+            <input type="checkbox" class="crud-pro-service-cb" value="${srv.id}" ${isChecked ? 'checked' : ''} style="width:18px; height:18px; accent-color: var(--color-gold); cursor: pointer; flex-shrink: 0;">
+            <label style="font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                <span class="service-badge cat-${srv.category}" style="font-size:8px; padding:2px 5px;">${srv.category}</span>
+                ${srv.name} <span style="font-size:11px; color:var(--color-text-muted);">(R$ ${srv.price.toFixed(2)})</span>
+            </label>
+        `;
+        container.appendChild(div);
+    });
+}
 
 window.closeProfessionalModal = function() {
     const modal = document.getElementById("crudProModal");
@@ -1390,6 +1658,10 @@ window.saveProfessional = function() {
     const bioInput = document.getElementById("crudProBio");
     const bio = bioInput ? bioInput.value.trim() : "";
     
+    // Capturar serviços vinculados (checkboxes marcados)
+    const serviceCheckboxes = document.querySelectorAll(".crud-pro-service-cb:checked");
+    const linkedServices = Array.from(serviceCheckboxes).map(cb => cb.value);
+    
     if (!name || !category || !role) {
         showToast("Por favor, preencha todos os campos obrigatórios.", "error");
         return;
@@ -1404,12 +1676,13 @@ window.saveProfessional = function() {
             pro.role = role;
             pro.photoUrl = photoUrl;
             pro.bio = bio;
+            pro.linkedServices = linkedServices;
             showToast("Profissional atualizada!", "success");
         }
     } else {
         // Criando Novo
         const newId = `prof-${Date.now()}`;
-        state.professionals.push({ id: newId, name, category, role, photoUrl, bio });
+        state.professionals.push({ id: newId, name, category, role, photoUrl, bio, linkedServices });
         showToast("Nova especialista integrada à equipe!", "success");
     }
     
@@ -1569,3 +1842,578 @@ window.deleteGalleryItem = function(galleryId) {
         showToast("Trabalho removido com sucesso.", "info");
     }
 };
+
+// --- CLIENT SERVICES MODAL CONTROL AND RENDERERS ---
+window.openClientServicesModal = function() {
+    renderClientServicesList("todos");
+    const modal = document.getElementById("clientServicesModal");
+    if (modal) modal.classList.add("active");
+};
+
+window.closeClientServicesModal = function() {
+    const modal = document.getElementById("clientServicesModal");
+    if (modal) modal.classList.remove("active");
+};
+
+window.filterModalServices = function(category) {
+    const buttons = document.querySelectorAll("[data-modal-category]");
+    buttons.forEach(btn => {
+        if (btn.getAttribute("data-modal-category") === category) {
+            btn.classList.add("active");
+        } else {
+            btn.classList.remove("active");
+        }
+    });
+    renderClientServicesList(category);
+};
+
+function renderClientServicesList(categoryFilter = "todos") {
+    const container = document.getElementById("clientServicesModalList");
+    if (!container) return;
+    container.innerHTML = "";
+    
+    const filtered = categoryFilter === "todos"
+        ? state.services
+        : state.services.filter(s => s.category === categoryFilter);
+        
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div style="text-align:center; padding:40px; color:var(--color-text-muted);">
+                Nenhum serviço cadastrado nesta categoria.
+            </div>
+        `;
+        return;
+    }
+    
+    filtered.forEach(srv => {
+        const div = document.createElement("div");
+        div.style.display = "flex";
+        div.style.justifyContent = "space-between";
+        div.style.alignItems = "center";
+        div.style.padding = "16px";
+        div.style.background = "var(--color-bg-primary)";
+        div.style.borderRadius = "var(--radius-md)";
+        div.style.border = "1px solid rgba(42,36,33,0.04)";
+        div.style.gap = "16px";
+        
+        div.innerHTML = `
+            <div style="flex-grow:1; text-align:left;">
+                <h4 style="font-family:var(--font-heading); font-size:16px; font-weight:700; color:var(--color-text-main); margin-bottom:4px;">${srv.name}</h4>
+                <p style="font-size:12.5px; color:var(--color-text-muted); line-height:1.5; margin-bottom:0;">${srv.description}</p>
+            </div>
+            <div style="display:flex; align-items:center; gap:24px; min-width:200px; justify-content:flex-end; flex-shrink:0;">
+                <div style="text-align:right;">
+                    <div style="font-family:var(--font-heading); font-size:16px; font-weight:700; color:var(--color-text-main);">R$ ${srv.price.toFixed(2)}</div>
+                    <div style="font-size:11px; color:var(--color-text-muted);"><i class="fa-regular fa-clock"></i> ${srv.duration} min</div>
+                </div>
+                <button class="btn btn-primary" onclick="closeClientServicesModal(); openBookingWizard('${srv.category}', '${srv.id}');" style="padding:10px 20px; font-size:12px; border-radius: 20px;">
+                    Agendar
+                </button>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// --- FUNCIONALIDADES DE BLOQUEIO DE AGENDA ---
+window.toggleLockHoursVisibility = function() {
+    const lockTypeSelect = document.getElementById("lockTypeSelect");
+    const lockHoursContainer = document.getElementById("lockHoursContainer");
+    if (lockTypeSelect && lockHoursContainer) {
+        if (lockTypeSelect.value === "custom") {
+            lockHoursContainer.classList.remove("hidden");
+        } else {
+            lockHoursContainer.classList.add("hidden");
+        }
+    }
+};
+
+window.loadLockProSelectOptions = function() {
+    const select = document.getElementById("lockProSelect");
+    if (!select) return;
+    
+    // Manter a primeira opção de "Todo o Salão"
+    select.innerHTML = '<option value="all">Todo o Salão (Todas as Especialistas)</option>';
+    
+    state.professionals.forEach(pro => {
+        const option = document.createElement("option");
+        option.value = pro.id;
+        option.textContent = pro.name;
+        select.appendChild(option);
+    });
+};
+
+window.saveBlock = function() {
+    const lockProSelect = document.getElementById("lockProSelect");
+    const lockDate = document.getElementById("lockDate");
+    const lockTypeSelect = document.getElementById("lockTypeSelect");
+    const lockStartHour = document.getElementById("lockStartHour");
+    const lockEndHour = document.getElementById("lockEndHour");
+    
+    if (!lockProSelect || !lockDate || !lockTypeSelect) return;
+    
+    const professionalId = lockProSelect.value;
+    const date = lockDate.value;
+    const timeType = lockTypeSelect.value;
+    
+    if (!date) {
+        showToast("Por favor, selecione uma data para o bloqueio.", "error");
+        return;
+    }
+    
+    let startHour = "";
+    let endHour = "";
+    
+    if (timeType === "custom") {
+        if (!lockStartHour || !lockEndHour) return;
+        startHour = lockStartHour.value;
+        endHour = lockEndHour.value;
+        
+        // Validar se hora de término é posterior à de início
+        if (startHour >= endHour) {
+            showToast("O horário de término deve ser após o horário de início.", "error");
+            return;
+        }
+    }
+    
+    const newLock = {
+        id: `lock-${Date.now()}`,
+        professionalId,
+        date,
+        timeType,
+        startHour,
+        endHour
+    };
+    
+    state.locks.push(newLock);
+    saveStateToLocalStorage();
+    showToast("Bloqueio de agenda criado com sucesso!", "success");
+    
+    // Limpar form
+    lockDate.value = "";
+    lockTypeSelect.value = "all";
+    toggleLockHoursVisibility();
+    
+    // Atualizar UI do admin
+    renderAdminLocks();
+};
+
+window.deleteBlock = function(id) {
+    if (confirm("Tem certeza que deseja remover este bloqueio de agenda?")) {
+        state.locks = state.locks.filter(l => l.id !== id);
+        saveStateToLocalStorage();
+        renderAdminLocks();
+        showToast("Bloqueio removido com sucesso.", "info");
+    }
+};
+
+window.renderAdminLocks = function() {
+    const tbody = document.getElementById("adminLocksTableBody");
+    if (!tbody) return;
+    tbody.innerHTML = "";
+    
+    if (state.locks.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="4" style="text-align: center; color: var(--color-text-muted); padding: 20px;">
+                    Nenhum bloqueio de agenda cadastrado.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    // Ordenar bloqueios por data recente
+    const sortedLocks = [...state.locks].sort((a, b) => b.date.localeCompare(a.date));
+    
+    sortedLocks.forEach(l => {
+        // Encontrar nome da profissional
+        let proName = "Todo o Salão";
+        if (l.professionalId !== "all") {
+            const pro = state.professionals.find(p => p.id === l.professionalId);
+            proName = pro ? pro.name : "Profissional Inexistente";
+        }
+        
+        // Formatar período
+        let periodStr = "Dia Inteiro";
+        if (l.timeType === "custom") {
+            periodStr = `${l.startHour} às ${l.endHour}`;
+        }
+        
+        // Formatar data para DD/MM/AAAA
+        const parts = l.date.split("-");
+        const formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+        
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td><strong>${proName}</strong></td>
+            <td>${formattedDate}</td>
+            <td><span class="badge ${l.timeType === 'all' ? 'badge-danger' : 'badge-warning'}" style="background: ${l.timeType === 'all' ? 'rgba(220,53,69,0.1)' : 'rgba(255,193,7,0.1)'}; color: ${l.timeType === 'all' ? '#dc3545' : '#ffc107'}; font-size:11px; font-weight:600; padding:4px 8px; border-radius:4px;">${periodStr}</span></td>
+            <td>
+                <button class="btn btn-danger" onclick="deleteBlock('${l.id}')" style="padding: 6px 12px; font-size: 11px; background: transparent; border: 1px solid var(--color-danger); color: var(--color-danger); border-radius: 4px; cursor: pointer;">
+                    <i class="fa-regular fa-trash-can"></i> Excluir
+                </button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+};
+
+// --- FUNCIONALIDADES DE BACKUP & SEGURANÇA ---
+window.exportSystemBackup = function() {
+    try {
+        const backupData = {
+            services: state.services,
+            professionals: state.professionals,
+            bookings: state.bookings,
+            gallery: state.gallery,
+            locks: state.locks
+        };
+        
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", `studio_fenix_backup_${new Date().toISOString().slice(0,10)}.json`);
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+        showToast("Backup baixado com sucesso!", "success");
+    } catch (e) {
+        showToast("Erro ao exportar backup.", "error");
+        console.error(e);
+    }
+};
+
+window.handleBackupRestoreSelect = function(input) {
+    const displaySpan = document.getElementById("backupFileNameDisplay");
+    const confirmBtn = document.getElementById("btnConfirmRestore");
+    
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        if (displaySpan) {
+            displaySpan.innerHTML = `<i class="fa-solid fa-file-circle-check" style="margin-right: 8px; color: var(--color-success);"></i>${file.name}`;
+        }
+        if (confirmBtn) {
+            confirmBtn.removeAttribute("disabled");
+            confirmBtn.style.opacity = "1";
+            confirmBtn.style.cursor = "pointer";
+        }
+    } else {
+        if (displaySpan) {
+            displaySpan.innerHTML = `<i class="fa-regular fa-file-code" style="margin-right: 8px;"></i>Selecionar arquivo de backup...`;
+        }
+        if (confirmBtn) {
+            confirmBtn.setAttribute("disabled", "true");
+            confirmBtn.style.opacity = "0.5";
+            confirmBtn.style.cursor = "not-allowed";
+        }
+    }
+};
+
+window.restoreSystemBackup = function() {
+    const input = document.getElementById("backupRestoreInput");
+    if (!input || !input.files || !input.files[0]) {
+        showToast("Selecione um arquivo de backup primeiro.", "error");
+        return;
+    }
+    
+    if (!confirm("Atenção: A restauração substituirá todos os agendamentos, equipe, serviços e bloqueios atuais por completo. Deseja continuar?")) {
+        return;
+    }
+    
+    const file = input.files[0];
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        try {
+            const parsed = JSON.parse(e.target.result);
+            
+            // Validação simples
+            if (!parsed.services || !parsed.professionals || !parsed.bookings) {
+                showToast("Arquivo de backup inválido. Chaves obrigatórias ausentes.", "error");
+                return;
+            }
+            
+            // Atualizar o state
+            state.services = parsed.services;
+            state.professionals = parsed.professionals;
+            state.bookings = parsed.bookings;
+            state.gallery = parsed.gallery || [];
+            state.locks = parsed.locks || [];
+            
+            // Persistir
+            saveStateToLocalStorage();
+            
+            // Re-renderizar tudo
+            renderServiceCards();
+            renderClientSpecialists();
+            renderClientGallery();
+            renderAdminDashboard();
+            
+            showToast("Backup restaurado com sucesso!", "success");
+            
+            // Resetar inputs
+            input.value = "";
+            const displaySpan = document.getElementById("backupFileNameDisplay");
+            if (displaySpan) {
+                displaySpan.innerHTML = `<i class="fa-regular fa-file-code" style="margin-right: 8px;"></i>Selecionar arquivo de backup...`;
+            }
+            const confirmBtn = document.getElementById("btnConfirmRestore");
+            if (confirmBtn) {
+                confirmBtn.setAttribute("disabled", "true");
+                confirmBtn.style.opacity = "0.5";
+                confirmBtn.style.cursor = "not-allowed";
+            }
+        } catch (err) {
+            showToast("Erro ao processar arquivo JSON de backup.", "error");
+            console.error(err);
+        }
+    };
+    
+    reader.readAsText(file);
+};
+
+// --- CONSULTA DE HISTÓRICO E FIDELIZAÇÃO DE CLIENTES ---
+window.searchClientHistory = function() {
+    const input = document.getElementById("clientHistorySearchInput");
+    const container = document.getElementById("clientHistoryResultContainer");
+    if (!input || !container) return;
+    
+    const query = input.value.trim().toLowerCase();
+    if (!query) {
+        container.innerHTML = `
+            <div style="text-align: center; color: var(--color-text-muted); font-size: 13px;">
+                <i class="fa-solid fa-magnifying-glass" style="font-size: 24px; margin-bottom: 8px; display: block; color: var(--color-gold);"></i>
+                Digite o nome ou número de WhatsApp para consultar o perfil e histórico completo da cliente.
+            </div>
+        `;
+        return;
+    }
+    
+    // Filtrar agendamentos que contêm o nome ou telefone correspondentes
+    const matches = state.bookings.filter(b => 
+        (b.clientName && b.clientName.toLowerCase().includes(query)) ||
+        (b.clientPhone && b.clientPhone.replace(/\D/g, '').includes(query.replace(/\D/g, '')))
+    );
+    
+    if (matches.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; color: var(--color-text-muted); font-size: 13px;">
+                <i class="fa-solid fa-face-frown" style="font-size: 24px; margin-bottom: 8px; display: block; color: var(--color-danger);"></i>
+                Nenhuma cliente encontrada com os dados digitados.
+            </div>
+        `;
+        return;
+    }
+    
+    // Agrupar correspondências por cliente único
+    const clientsMap = {};
+    matches.forEach(b => {
+        const key = (b.clientPhone || b.clientName).trim().toLowerCase();
+        if (!clientsMap[key]) {
+            clientsMap[key] = {
+                name: b.clientName,
+                phone: b.clientPhone,
+                bookings: []
+            };
+        }
+        clientsMap[key].bookings.push(b);
+    });
+    
+    const clients = Object.values(clientsMap);
+    
+    if (clients.length > 1) {
+        let html = `<h4 style="font-family: var(--font-heading); font-size: 14px; margin-bottom: 10px; color: var(--color-gold); font-weight:700;">Selecione a Cliente (${clients.length} encontradas):</h4>`;
+        html += `<div style="display: flex; flex-direction: column; gap: 8px;">`;
+        clients.forEach(c => {
+            html += `
+                <div style="padding: 10px 15px; background: var(--color-bg-primary); border: 1px solid rgba(42,36,33,0.05); border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s;" 
+                     onclick="renderClientHistoryDetails('${c.phone.replace(/'/g, "\\'")}', '${c.name.replace(/'/g, "\\'")}')"
+                     onmouseover="this.style.borderColor='var(--color-gold)'" 
+                     onmouseout="this.style.borderColor='rgba(42,36,33,0.05)'">
+                    <div>
+                        <strong style="color: var(--color-text-main); font-size:13.5px;">${c.name}</strong>
+                        <span style="font-size: 12px; color: var(--color-text-muted); margin-left: 10px;">${c.phone}</span>
+                    </div>
+                    <span style="font-size: 11px; background: var(--color-gold-light); color: var(--color-gold); padding: 2px 8px; border-radius: 20px; font-weight:600;">
+                        ${c.bookings.length} agendamento(s)
+                    </span>
+                </div>
+            `;
+        });
+        html += `</div>`;
+        container.innerHTML = html;
+    } else {
+        renderSingleClientHistoryDetails(clients[0]);
+    }
+};
+
+window.renderClientHistoryDetails = function(phone, name) {
+    const container = document.getElementById("clientHistoryResultContainer");
+    if (!container) return;
+    
+    const clientBookings = state.bookings.filter(b => 
+        (b.clientPhone && b.clientPhone === phone) || 
+        (!b.clientPhone && b.clientName === name)
+    );
+    
+    if (clientBookings.length === 0) return;
+    
+    renderSingleClientHistoryDetails({
+        name: clientBookings[0].clientName,
+        phone: clientBookings[0].clientPhone,
+        bookings: clientBookings
+    });
+};
+
+function renderSingleClientHistoryDetails(client) {
+    const container = document.getElementById("clientHistoryResultContainer");
+    if (!container) return;
+    
+    const bookings = client.bookings;
+    const total = bookings.length;
+    const completed = bookings.filter(b => b.status === "concluido").length;
+    const confirmed = bookings.filter(b => b.status === "confirmado").length;
+    const pending = bookings.filter(b => b.status === "pendente").length;
+    const cancelled = bookings.filter(b => b.status === "cancelado").length;
+    
+    const spent = bookings
+        .filter(b => b.status === "concluido" || b.status === "confirmado")
+        .reduce((sum, b) => sum + (b.price || 0), 0);
+        
+    let loyaltyBadge = "Nova Cliente";
+    let badgeStyle = "background: rgba(0,123,255,0.1); color: #007bff;";
+    if (completed >= 5) {
+        loyaltyBadge = "Cliente VIP Fênix";
+        badgeStyle = "background: var(--color-gold-light); color: var(--color-gold); border: 1px solid var(--color-gold);";
+    } else if (completed >= 2) {
+        loyaltyBadge = "Cliente Frequente";
+        badgeStyle = "background: rgba(40,167,69,0.1); color: #28a745;";
+    }
+    
+    const pros = {};
+    const services = {};
+    bookings.forEach(b => {
+        if (b.professionalName) pros[b.professionalName] = (pros[b.professionalName] || 0) + 1;
+        if (b.serviceName) services[b.serviceName] = (services[b.serviceName] || 0) + 1;
+    });
+    
+    const topPro = Object.keys(pros).reduce((a, b) => pros[a] > pros[b] ? a : b, "N/A");
+    const topService = Object.keys(services).reduce((a, b) => services[a] > services[b] ? a : b, "N/A");
+    
+    let html = `
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px; border-bottom: 1px solid rgba(197, 160, 89, 0.15); padding-bottom: 12px; margin-bottom: 15px;">
+            <div>
+                <h3 style="font-family: var(--font-heading); font-size: 18px; margin: 0; color: var(--color-text-main); font-weight: 700;">
+                    ${client.name}
+                </h3>
+                <span style="font-size: 13px; color: var(--color-text-muted);"><i class="fa-solid fa-phone" style="font-size:11px; margin-right:4px;"></i> ${client.phone}</span>
+            </div>
+            <span class="badge" style="font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; ${badgeStyle}">
+                <i class="fa-solid fa-crown" style="margin-right: 4px;"></i> ${loyaltyBadge}
+            </span>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px;">
+            <div style="background: var(--color-bg-primary); padding: 12px; border-radius: var(--radius-sm); border: 1px solid rgba(42,36,33,0.03); text-align: center;">
+                <span style="font-size: 11px; color: var(--color-text-muted); display: block; text-transform: uppercase; letter-spacing: 0.5px;">Agendamentos</span>
+                <strong style="font-size: 20px; color: var(--color-text-main); display: block; margin-top: 4px;">${total}</strong>
+            </div>
+            <div style="background: var(--color-bg-primary); padding: 12px; border-radius: var(--radius-sm); border: 1px solid rgba(42,36,33,0.03); text-align: center;">
+                <span style="font-size: 11px; color: var(--color-success); display: block; text-transform: uppercase; letter-spacing: 0.5px;">Concluídos</span>
+                <strong style="font-size: 20px; color: var(--color-success); display: block; margin-top: 4px;">${completed}</strong>
+            </div>
+            <div style="background: var(--color-bg-primary); padding: 12px; border-radius: var(--radius-sm); border: 1px solid rgba(42,36,33,0.03); text-align: center;">
+                <span style="font-size: 11px; color: var(--color-danger); display: block; text-transform: uppercase; letter-spacing: 0.5px;">Cancelados</span>
+                <strong style="font-size: 20px; color: var(--color-danger); display: block; margin-top: 4px;">${cancelled}</strong>
+            </div>
+            <div style="background: var(--color-bg-primary); padding: 12px; border-radius: var(--radius-sm); border: 1px solid rgba(42,36,33,0.03); text-align: center;">
+                <span style="font-size: 11px; color: var(--color-gold); display: block; text-transform: uppercase; letter-spacing: 0.5px;">Faturamento</span>
+                <strong style="font-size: 20px; color: var(--color-gold); display: block; margin-top: 4px;">R$ ${spent.toFixed(2)}</strong>
+            </div>
+        </div>
+        
+        <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; padding: 12px 15px; background: rgba(197, 160, 89, 0.04); border-radius: var(--radius-sm); font-size: 13px; color: var(--color-text-main);">
+            <div><i class="fa-solid fa-star" style="color: var(--color-gold); margin-right: 4px;"></i> <strong>Serviço Favorito:</strong> ${topService}</div>
+            <div><i class="fa-solid fa-heart" style="color: var(--color-rose); margin-right: 4px;"></i> <strong>Profissional Favorita:</strong> ${topPro}</div>
+        </div>
+        
+        <h4 style="font-family: var(--font-heading); font-size: 14px; margin-bottom: 12px; color: var(--color-text-main); border-bottom: 1px solid rgba(42,36,33,0.05); padding-bottom: 6px;">Histórico de Visitas:</h4>
+        <div style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 5px;">
+    `;
+    
+    const sorted = [...bookings].sort((a, b) => {
+        const da = `${a.date}T${a.time}`;
+        const db = `${b.date}T${b.time}`;
+        return db.localeCompare(da);
+    });
+    
+    sorted.forEach(b => {
+        const parts = b.date.split("-");
+        const formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+        
+        let statusBadgeStyle = "background: rgba(255,193,7,0.1); color: #ffc107;";
+        if (b.status === "concluido") statusBadgeStyle = "background: rgba(40,167,69,0.1); color: #28a745;";
+        if (b.status === "confirmado") statusBadgeStyle = "background: rgba(0,123,255,0.1); color: #007bff;";
+        if (b.status === "cancelado") statusBadgeStyle = "background: rgba(220,53,69,0.1); color: #dc3545;";
+        
+        html += `
+            <div style="padding: 10px 15px; background: var(--color-bg-primary); border-left: 3px solid ${b.status === 'concluido' ? 'var(--color-success)' : b.status === 'cancelado' ? 'var(--color-danger)' : 'var(--color-gold)'}; border-radius: var(--radius-xs); display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; gap: 10px;">
+                <div>
+                    <strong style="color: var(--color-text-main);">${b.serviceName}</strong>
+                    <div style="color: var(--color-text-muted); font-size: 11.5px; margin-top: 2px;">
+                        Com <strong>${b.professionalName}</strong> em ${formattedDate} às ${b.time}
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+                    <span style="font-weight: 700; color: var(--color-text-main);">R$ ${(b.price || 0).toFixed(2)}</span>
+                    <span style="font-size: 10px; font-weight:700; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; ${statusBadgeStyle}">
+                        ${b.status}
+                    </span>
+                </div>
+            </div>
+        `;
+    });
+    
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+// --- EXCLUSÃO DE AGENDAMENTOS ---
+window.deleteBookingIndividual = function(id) {
+    if (confirm("Tem certeza que deseja excluir este agendamento?")) {
+        state.bookings = state.bookings.filter(b => b.id !== id);
+        saveStateToLocalStorage();
+        
+        // Atualizar visualizações
+        renderAdminBookingsTable();
+        renderAdminDashboardMetrics();
+        
+        // Limpar busca de histórico se estiver aberta
+        const historySearch = document.getElementById("clientHistorySearchInput");
+        if (historySearch && historySearch.value.trim() !== "") {
+            searchClientHistory();
+        }
+        
+        showToast("Agendamento excluído com sucesso.", "info");
+    }
+};
+
+window.deleteAllBookings = function() {
+    if (confirm("ATENÇÃO: Tem certeza que deseja excluir TODOS os agendamentos cadastrados? Esta ação não pode ser desfeita.")) {
+        state.bookings = [];
+        saveStateToLocalStorage();
+        
+        // Atualizar visualizações
+        renderAdminBookingsTable();
+        renderAdminDashboardMetrics();
+        
+        // Limpar busca de histórico
+        const historySearch = document.getElementById("clientHistorySearchInput");
+        if (historySearch) historySearch.value = "";
+        searchClientHistory();
+        
+        showToast("Todos os agendamentos foram excluídos.", "info");
+    }
+};
+

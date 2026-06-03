@@ -765,8 +765,8 @@ img {
    ========================================================================== */
 .specialists-organic-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 48px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
     margin-top: 40px;
 }
 
@@ -775,33 +775,35 @@ img {
     border-radius: var(--radius-md);
     border: 1px solid rgba(197, 160, 89, 0.06);
     box-shadow: var(--shadow-sm);
-    padding: 32px;
+    padding: 32px 24px;
     display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    gap: 32px;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 24px;
     transition: var(--transition-smooth);
+    height: 100%;
 }
 
 .specialist-organic-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-md), 0 10px 25px rgba(197, 160, 89, 0.08);
-    border-color: rgba(197, 160, 89, 0.15);
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg), 0 12px 30px rgba(197, 160, 89, 0.1);
+    border-color: rgba(197, 160, 89, 0.2);
 }
 
 .specialist-organic-img-wrapper {
     position: relative;
-    width: 160px;
-    min-width: 160px;
-    height: 220px;
-    border-radius: 16px;
+    width: 100%;
+    height: 380px;
+    border-radius: var(--radius-md);
     overflow: hidden;
-    background: linear-gradient(135deg, var(--color-rose-light) 0%, var(--color-gold-light) 100%);
-    border: 1px solid rgba(197, 160, 89, 0.1);
+    background: #f2ebe4; /* Elegant nude/bege background */
+    border: 1px solid rgba(197, 160, 89, 0.12);
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: var(--shadow-sm);
+    flex-shrink: 0;
 }
 
 .specialist-organic-img {
@@ -820,7 +822,7 @@ img {
 }
 
 .specialist-organic-placeholder {
-    font-size: 40px;
+    font-size: 32px;
     color: var(--color-gold);
     z-index: 1;
     display: flex;
@@ -828,22 +830,25 @@ img {
     justify-content: center;
     width: 100%;
     height: 100%;
-    opacity: 0.8;
+    font-weight: 700;
+    opacity: 0.85;
 }
 
 .specialist-organic-info {
     display: flex;
     flex-direction: column;
+    align-items: center;
     justify-content: space-between;
     flex-grow: 1;
+    width: 100%;
 }
 
 .specialist-organic-name {
     font-family: var(--font-heading);
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 700;
     color: var(--color-text-main);
-    margin-bottom: 2px;
+    margin-bottom: 4px;
 }
 
 .specialist-organic-role {
@@ -857,20 +862,21 @@ img {
 }
 
 .specialist-organic-bio {
-    font-size: 13.5px;
+    font-size: 13px;
     color: var(--color-text-muted);
-    line-height: 1.6;
-    margin-bottom: auto;
+    line-height: 1.5;
+    margin-bottom: 20px;
 }
 
 .specialist-organic-footer {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
     gap: 16px;
-    margin-top: 24px;
+    margin-top: auto;
     border-top: 1px dashed rgba(197, 160, 89, 0.15);
     padding-top: 16px;
+    width: 100%;
 }
 
 .specialist-organic-gallery {
@@ -900,6 +906,8 @@ img {
     color: #ffffff;
     border: 1px solid var(--color-text-main);
     transition: var(--transition-smooth);
+    width: 100%;
+    cursor: pointer;
 }
 
 .btn-organic-book:hover {
@@ -1701,12 +1709,25 @@ img {
     border: 1px solid rgba(42, 36, 33, 0.08);
 }
 
-.action-icon-btn.confirm { color: var(--color-info); }
-.action-icon-btn.confirm:hover { background: var(--color-info-light); }
+.action-icon-btn.confirm { color: #25D366; }
+.action-icon-btn.confirm:hover { background: #dcf8e6; transform: scale(1.15); }
 .action-icon-btn.done { color: var(--color-success); }
 .action-icon-btn.done:hover { background: var(--color-success-light); }
 .action-icon-btn.cancel { color: var(--color-danger); }
 .action-icon-btn.cancel:hover { background: var(--color-danger-light); }
+
+/* Admin Status Select Dropdown */
+.admin-status-select {
+    background: var(--color-bg-primary);
+    border: 1px solid rgba(42, 36, 33, 0.1);
+    color: var(--color-text-main);
+    transition: var(--transition-fast);
+}
+
+.admin-status-select:focus {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 1px;
+}
 
 /* Gráficos Minimalistas SVG/CSS */
 .chart-container {
@@ -2053,6 +2074,11 @@ img {
         grid-template-columns: repeat(2, 1fr);
         gap: 16px;
     }
+
+    .quick-access-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
 }
 
 /* Celulares e Smartphones (Toque e Usabilidade) */
@@ -2157,8 +2183,8 @@ img {
     
     .specialist-organic-img-wrapper {
         width: 100%;
-        max-width: 200px;
-        height: 260px;
+        max-width: 100%;
+        height: 350px;
     }
     
     .specialist-organic-footer {
@@ -2404,5 +2430,96 @@ img {
         grid-template-columns: 1fr;
         gap: 32px;
     }
+}
+
+/* Botão do WhatsApp no Painel Admin (Tabela) */
+.admin-wa-btn {
+    transition: transform 0.2s, opacity 0.2s;
+}
+.admin-wa-btn:hover {
+    transform: scale(1.2);
+    opacity: 0.8;
+}
+
+/* ==========================================================================
+   SEÇÃO FUNÇÕES E ACESSO RÁPIDO
+   ========================================================================== */
+.quick-access-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-top: 40px;
+}
+
+.quick-card {
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(197, 160, 89, 0.08);
+    box-shadow: var(--shadow-sm);
+    padding: 40px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: var(--transition-smooth);
+    height: 100%;
+}
+
+.quick-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg), var(--shadow-gold);
+    border-color: rgba(197, 160, 89, 0.25);
+}
+
+.quick-card-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-round);
+    background: var(--color-bg-primary);
+    color: var(--color-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(197, 160, 89, 0.15);
+    transition: var(--transition-smooth);
+}
+
+.quick-card:hover .quick-card-icon {
+    background: var(--color-gold);
+    color: #ffffff;
+}
+
+.quick-card-title {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--color-text-main);
+    margin-bottom: 12px;
+}
+
+.quick-card-desc {
+    font-size: 14px;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    margin-bottom: 24px;
+    flex-grow: 1;
+}
+
+.quick-card-link {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-gold);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--transition-fast);
+}
+
+.quick-card:hover .quick-card-link {
+    color: var(--color-text-main);
 }
 
